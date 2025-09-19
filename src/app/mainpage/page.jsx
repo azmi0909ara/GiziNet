@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Sidebar from "../components/Sidebar";
 
 export default function MainPage() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -8,7 +9,7 @@ export default function MainPage() {
   const [selectedHistory, setSelectedHistory] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Dummy data history + nutrisi
+  // Dummy data history
   const historyItems = [
     {
       id: 1,
@@ -36,7 +37,6 @@ export default function MainPage() {
     },
   ];
 
-  // Filter berdasarkan search
   const filteredHistory = historyItems.filter((item) =>
     item.name.toLowerCase().includes(searchHistory.toLowerCase())
   );
@@ -44,106 +44,65 @@ export default function MainPage() {
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedImage(URL.createObjectURL(e.target.files[0]));
-      setSelectedHistory(null); // reset kalau upload/scan baru
+      setSelectedHistory(null);
     }
   };
 
   return (
-    <main className="min-h-screen flex bg-gray-100 relative overflow-hidden">
-      {/* Overlay (blur + gelap) */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-20 transition-opacity"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
+    <main className="min-h-screen flex relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 -z-10">
+        <img
+          src="/bkg1.png"
+          alt="Background"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+      </div>
 
-      {/* Sidebar */}
-      <aside
-        className={`fixed md:static top-0 left-0 h-full w-64 bg-gradient-to-b from-red-600 to-orange-500 text-white p-6 flex flex-col gap-6 shadow-lg z-30 transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
-      >
-        <h2 className="text-2xl font-bold mb-6">Gizinet</h2>
-        <nav className="flex flex-col gap-4">
-          {/* Profile icon pakai emoji */}
-          <a
-            href="#"
-            className="flex items-center gap-3 hover:bg-red-700 px-3 py-2 rounded-lg"
-          >
-            <span className="text-2xl">👤</span>
-            <span>Profile</span>
-          </a>
-
-          {/* History tanpa dropdown */}
-          <div>
-            <h3 className="font-semibold mb-2">History Analysis</h3>
-            <input
-              type="text"
-              placeholder="Cari history..."
-              value={searchHistory}
-              onChange={(e) => setSearchHistory(e.target.value)}
-              className="w-full px-3 py-2 mb-3 rounded-md text-black text-sm focus:ring-2 focus:ring-orange-400"
-            />
-            <ul className="max-h-60 overflow-y-auto">
-              {filteredHistory.length > 0 ? (
-                filteredHistory.map((item) => (
-                  <li
-                    key={item.id}
-                    onClick={() => {
-                      setSelectedHistory(item);
-                      setSidebarOpen(false); // auto tutup sidebar di mobile
-                    }}
-                    className="px-4 py-2 hover:bg-red-800 cursor-pointer text-sm rounded-md"
-                  >
-                    {item.name}{" "}
-                    <span className="text-gray-300">({item.date})</span>
-                  </li>
-                ))
-              ) : (
-                <li className="px-4 py-2 text-sm text-gray-300">
-                  Tidak ditemukan
-                </li>
-              )}
-            </ul>
-          </div>
-        </nav>
-      </aside>
+      {/* Sidebar dipisah ke komponen */}
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        filteredHistory={filteredHistory}
+        setSelectedHistory={setSelectedHistory}
+        searchHistory={searchHistory}
+        setSearchHistory={setSearchHistory}
+      />
 
       {/* Content */}
       <section
-        className={`flex-1 p-6 md:p-10 transition-all duration-300 ${
+        className={`flex-1 p-6 md:p-10 transition-all duration-300 text-white ${
           sidebarOpen ? "blur-sm md:blur-0" : ""
         }`}
       >
         {/* Tombol buka sidebar (mobile) */}
         <button
           onClick={() => setSidebarOpen(true)}
-          className="md:hidden mb-4 px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700"
+          className="md:hidden mb-4 px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition"
         >
           ☰ Menu
         </button>
 
         {/* Hero */}
         {!selectedHistory && !selectedImage && (
-          <div className="bg-white p-8 rounded-2xl shadow text-center mb-10">
+          <div className="bg-white/90 p-8 rounded-2xl shadow text-center mb-10 max-w-2xl mx-auto">
             <h1 className="text-3xl md:text-4xl font-bold text-red-600 mb-4">
-              Selamat Datang di Gizinet MainPage
+              Selamat Datang di Gizinet
             </h1>
-            <p className="text-gray-600">
-              Upload atau scan makanan Anda untuk mengetahui kandungan
-              nutrisinya!
+            <p className="text-gray-700">
+              Upload atau scan makanan Anda untuk mengetahui kandungan nutrisinya!
             </p>
           </div>
         )}
 
         {/* Upload / Scan Gambar */}
         {!selectedHistory && (
-          <div className="bg-white p-8 rounded-2xl shadow text-center">
-            <h2 className="text-black semi-bold text-2xl font-semibold mb-4">
+          <div className="bg-white/90 p-8 rounded-2xl shadow text-center max-w-2xl mx-auto">
+            <h2 className="text-black font-semibold text-2xl mb-4">
               Analisis Gambar Makanan
             </h2>
             <div className="flex flex-col md:flex-row gap-4 justify-center mb-6">
-              {/* Upload dari file */}
               <label className="px-6 py-3 bg-orange-500 text-white rounded-lg shadow cursor-pointer hover:bg-orange-600 transition">
                 Upload Gambar
                 <input
@@ -171,38 +130,23 @@ export default function MainPage() {
           </div>
         )}
 
-        {/* Detail Nutrisi dari History */}
+        {/* Detail Nutrisi */}
         {selectedHistory && (
-          <div className="bg-white p-8 rounded-2xl shadow text-center">
+          <div className="bg-white/90 p-8 rounded-2xl shadow text-center max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold text-red-600 mb-4">
               Detail Analisis: {selectedHistory.name}
             </h2>
-            <p className="text-gray-500 mb-6">Tanggal: {selectedHistory.date}</p>
+            <p className="text-gray-700 mb-6">Tanggal: {selectedHistory.date}</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-              <div className="bg-orange-100 p-4 rounded-lg shadow">
-                <p className="font-semibold">Kalori</p>
-                <p className="text-xl text-red-600">
-                  {selectedHistory.nutrition.kalori}
-                </p>
-              </div>
-              <div className="bg-orange-100 p-4 rounded-lg shadow">
-                <p className="font-semibold">Protein</p>
-                <p className="text-xl text-red-600">
-                  {selectedHistory.nutrition.protein}
-                </p>
-              </div>
-              <div className="bg-orange-100 p-4 rounded-lg shadow">
-                <p className="font-semibold">Karbo</p>
-                <p className="text-xl text-red-600">
-                  {selectedHistory.nutrition.karbo}
-                </p>
-              </div>
-              <div className="bg-orange-100 p-4 rounded-lg shadow">
-                <p className="font-semibold">Lemak</p>
-                <p className="text-xl text-red-600">
-                  {selectedHistory.nutrition.lemak}
-                </p>
-              </div>
+              {Object.entries(selectedHistory.nutrition).map(([key, val]) => (
+                <div
+                  key={key}
+                  className="bg-orange-100 p-4 rounded-lg shadow text-black"
+                >
+                  <p className="font-semibold capitalize">{key}</p>
+                  <p className="text-xl text-red-600">{val}</p>
+                </div>
+              ))}
             </div>
             <button
               onClick={() => setSelectedHistory(null)}
