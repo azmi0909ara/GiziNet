@@ -1,4 +1,17 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 export default function SignIn() {
+  const router = useRouter();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // 👉 nanti di sini bisa tambahkan validasi / API login
+    // kalau sukses:
+    router.push("/mainpage"); // arahkan ke halaman MainPage
+  };
+
   return (
     <main
       className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden"
@@ -18,7 +31,7 @@ export default function SignIn() {
         </h2>
 
         {/* Form */}
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit}>
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-1">
@@ -79,6 +92,7 @@ export default function SignIn() {
         <button
           type="button"
           className="w-full py-3 border border-gray-300 rounded-lg flex items-center justify-center gap-2 bg-white/70 hover:bg-white transition"
+          onClick={() => router.push("/mainpage")}
         >
           <img
             src="https://www.svgrepo.com/show/355037/google.svg"

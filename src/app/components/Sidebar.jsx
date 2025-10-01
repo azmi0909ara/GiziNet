@@ -28,7 +28,7 @@ export default function Sidebar({
           <h2 className="text-2xl font-bold mb-6">🍎 Gizinet</h2>
           <nav className="flex flex-col gap-4">
             <a
-              href="#"
+              href="mainpage/profile"
               className="flex items-center gap-3 hover:bg-red-700 px-3 py-2 rounded-lg transition"
             >
               <span className="text-2xl">👤</span>

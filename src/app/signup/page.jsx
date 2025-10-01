@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
@@ -14,6 +15,8 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
   });
+
+  const router = useRouter();
 
   const handleChange = (e) => {
     setFormData({
@@ -44,8 +47,12 @@ export default function SignUp() {
       alert("Password dan Konfirmasi Password tidak cocok!");
       return;
     }
+
+    // 👇 contoh submit (bisa ganti dengan API ke backend)
     console.log("Raw JSON:", JSON.stringify(formData, null, 2));
-    alert("Data berhasil dikirim! Cek console untuk JSON.");
+
+    // kalau sukses → redirect ke mainpage
+    router.push("/mainpage");
   };
 
   return (
